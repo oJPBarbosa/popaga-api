@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('bills', {
+    await queryInterface.createTable('groups', { 
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -13,27 +13,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      description: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      value: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
       state: {
         type: Sequelize.STRING,
         allowNull: false
-      },
-      group_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'groups',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
       },
       created_at: {
         type: Sequelize.DATE,
@@ -47,6 +29,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('bills');
+    await queryInterface.dropTable('groups');
   }
 };
