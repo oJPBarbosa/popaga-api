@@ -5,6 +5,9 @@
   "repository": "https://github.com/oJPBarbosa/popaga-api.git",
   "author": "Felipe Stolze Vazquez, Gabriel Willian Bartmanovicz e João Pedro Ferreira Barbosa",
   "license": "MIT",
+  "engine": {
+    "node": "14.x"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"
