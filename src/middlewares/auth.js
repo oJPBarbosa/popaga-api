@@ -1,6 +1,6 @@
 const { verify } = require('jsonwebtoken');
 
-const config = require('../config/auth.js');
+const config = require('../config/auth');
 
 module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization;
