@@ -9,9 +9,9 @@ const FriendController = require('./controllers/FriendController');
 
 const routes = express.Router();
 
-/* routes.get('/bills', BillController.index);
-routes.get('/bills/:id', BillController.show);
-routes.post('/bills', BillController.store);
+/* routes.get('/bills', auth, BillController.index);
+routes.get('/bills/:id', auth, BillController.show);
+routes.post('/bills', auth, BillController.store);
 
 routes.get('/groups', GroupController.index);
 routes.get('/groups/:id', GroupController.show);
