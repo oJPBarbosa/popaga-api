@@ -1,18 +1,21 @@
 const { verify } = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
-  const authToken = req.headers.authorization;
+const config = require('../config/auth.js');
 
-  if (!authToken) return res.status(401).send({ message: 'unauthorized user' });
+module.exports = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader)
+	return res.status(401).send({ error: 'Token not provided' });
 
   const [, token] = authToken.split(' ');
 
   try {
-    const decoded = verify(token, process.env.TOKEN);
+    const decoded = verify(token, config.secret);
 
     req.id = decoded['id'];
     return next();
-  } catch {
-    return res.status(401).send({ message: 'invalid token' });
+  } catch { 
+    return res.status(401).send({ error: 'Invalid token' });
   }
 };
