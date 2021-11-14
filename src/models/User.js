@@ -28,9 +28,8 @@ class User extends Model {
       through: 'user_groups',
       as: 'user',
     }); */
-    this.belongsToMany(models.UserGroup, {
+    this.belongsTo(models.UserGroup, {
       foreignKey: 'user_id',
-      through: 'user_groups',
       as: 'user',
     });
   }
