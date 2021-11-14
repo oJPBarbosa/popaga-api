@@ -42,7 +42,7 @@ module.exports = {
 
     try {
       if (bill_id) {
-        if (bill_id === '' || !validate(bill_id, 4))
+        if (!validate(bill_id, 4))
           return res.status(400).send({
             error: 'Invalid bill',
           });
@@ -68,7 +68,7 @@ module.exports = {
 
         return res.status(200).json(bill);
       } else if (group_id) {
-        if (group_id === '' || !validate(group_id, 4))
+        if (!validate(group_id, 4))
           return res.status(400).send({
             error: 'Invalid group',
           });
@@ -166,7 +166,7 @@ module.exports = {
       });
 
     const { group_id } = req.body;
-    if (!group_id || group_id === '' || !validate(group_id, 4))
+    if (!validate(group_id, 4))
       return res.status(400).send({
         error: 'Invalid group',
       });
@@ -203,7 +203,7 @@ module.exports = {
     const { id } = req.params;
     const { name, description, value, status } = req.body;
 
-    if (id === '' || !validate(id, 4))
+    if (!validate(id, 4))
       return res.status(400).send({
         error: 'Invalid bill',
       });
@@ -242,7 +242,7 @@ module.exports = {
   async destroy(req, res) {
     const { id } = req.params;
 
-    if (id === '' || !validate(id, 4))
+    if (!validate(id, 4))
       return res.status(400).send({
         error: 'Invalid bill',
       });
