@@ -5,17 +5,16 @@ const config = require('../config/auth');
 module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader)
-	return res.status(401).send({ error: 'Token not provided' });
+  if (!authHeader) return res.status(401).send({ error: 'Token not provided' });
 
-  const [, token] = authToken.split(' ');
+  const [, token] = authHeader.split(' ');
 
   try {
     const decoded = verify(token, config.secret);
 
     req.id = decoded['id'];
     return next();
-  } catch { 
+  } catch {
     return res.status(401).send({ error: 'Invalid token' });
   }
 };

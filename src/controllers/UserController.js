@@ -4,24 +4,43 @@ const { hash, compare } = require('bcrypt');
 const { v4 } = require('uuid');
 const { sign } = require('jsonwebtoken');
 
+const config = require('../config/auth');
+
 module.exports = {
   async index(req, res) {
-    const users = await User.findAll({
-      attributes: ['id', 'username', 'email', 'avatar', 'created_at'],
-    });
+    try {
+      const users = await User.findAll({
+        attributes: ['id', 'username', 'email', 'avatar', 'created_at'],
+      });
 
-    return res.json(users);
+      return res.status(200).json(users);
+    } catch {
+      return res.status(500).send({
+        error: 'Server fail',
+      });
+    }
   },
 
   async show(req, res) {
     const { id } = req.params;
 
-    const user = await User.findOne({
-      where: { id },
-      attributes: ['username', 'email', 'avatar', 'created_at'],
-    });
+    try {
+      const user = await User.findOne({
+        where: { id },
+        attributes: ['username', 'email', 'avatar', 'created_at'],
+      });
 
-    return res.json(user);
+      if (!user)
+        return res.status(404).send({
+          error: `User ${id} not found`,
+        });
+
+      return res.status(200).json(user);
+    } catch {
+      return res.status(500).send({
+        error: 'Server fail',
+      });
+    }
   },
 
   async auth(req, res) {
@@ -41,7 +60,7 @@ module.exports = {
           {
             id: user.get('id'),
           },
-          process.env.TOKEN,
+          config.secret,
           {
             expiresIn: 86400,
           }
@@ -54,11 +73,11 @@ module.exports = {
       }
 
       return res.status(401).send({
-        error: 'bad credentials',
+        error: 'Bad credentials',
       });
     } catch {
       return res.status(500).send({
-        error: 'server fail',
+        error: 'Server fail',
       });
     }
   },
@@ -74,21 +93,23 @@ module.exports = {
 
     if (exists)
       return res.status(400).json({
-        error: 'user already exists',
+        error: 'User already exists',
       });
 
-    await User.create({
-      id,
-      username,
-      email,
-      password: hashedPassword,
-      avatar,
-    });
+    try {
+      await User.create({
+        id,
+        username,
+        email,
+        password: hashedPassword,
+        avatar,
+      });
 
-    return res.status(201).json(
-      await User.findOne({
-        where: { id },
-      })
-    );
+      return res.status(201).json({ id });
+    } catch {
+      return res.status(500).send({
+        error: 'Server fail',
+      });
+    }
   },
 };

@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const config = require('../config/database');
 
 const Bill = require('../models/Bill');
 const Friend = require('../models/Friend');
@@ -7,12 +6,21 @@ const Group = require('../models/Group');
 const User = require('../models/User');
 const UserGroup = require('../models/UserGroup');
 
-const connection = new Sequelize(config);
+const config = require('../config/database');
 
-Bill.init(connection);
-Friend.init(connection);
-Group.init(connection);
-User.init(connection);
-UserGroup.init(connection);
+const models = [Bill, Friend, Group, User, UserGroup];
 
-module.exports = connection;
+class DataBase {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    const connection = new Sequelize(config);
+
+    models.map((model) => model.init(connection));
+    models.map((model) => model.associate(connection.models));
+  }
+}
+
+module.exports = new DataBase();
