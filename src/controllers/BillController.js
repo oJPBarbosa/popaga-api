@@ -37,7 +37,7 @@ module.exports = {
 
     if (bill_id && group_id)
       return res.status(400).send({
-        error: `Only one query param is allowed at a time`,
+        error: 'Only one query param is allowed at a time',
       });
 
     try {
@@ -61,7 +61,7 @@ module.exports = {
 
         if (!bill || bill.length === 0)
           return res.status(404).send({
-            error: `Bill ${bill_id} not found`,
+            error: 'Bill not found',
           });
 
         updateGroupStatuses(bill.get('group')['id']);
@@ -94,7 +94,7 @@ module.exports = {
 
         if (!bills || bills.length === 0)
           return res.status(404).send({
-            error: `Group ${group_id} has no bills`,
+            error: 'Group has no bills',
           });
 
         updateGroupStatuses(group_id);
@@ -144,25 +144,25 @@ module.exports = {
     const { name } = req.body;
     if (!name || name === '')
       return res.status(400).send({
-        error: `Invalid name`,
+        error: 'Invalid name',
       });
 
     const { description } = req.body;
     if (!description || description === '')
       return res.status(400).send({
-        error: `Invalid description`,
+        error: 'Invalid description',
       });
 
     const { value } = req.body;
     if (!value || value === '')
       return res.status(400).send({
-        error: `Invalid value`,
+        error: 'Invalid value',
       });
 
     const { status } = req.body;
     if (!status || status === '')
       return res.status(400).send({
-        error: `Invalid status`,
+        error: 'Invalid status',
       });
 
     const { group_id } = req.body;
@@ -174,7 +174,7 @@ module.exports = {
     const exists = await Group.findByPk(group_id);
     if (!exists)
       return res.status(404).send({
-        error: `Group ${group_id} not found`,
+        error: 'Group not found',
       });
 
     try {
@@ -218,7 +218,7 @@ module.exports = {
 
       if (!bill)
         return res.status(400).send({
-          error: `Bill ${id} not found`,
+          error: 'Bill not found',
         });
 
       bill.name = name;
@@ -230,7 +230,7 @@ module.exports = {
       await bill.save();
 
       return res.status(200).send({
-        message: `Bill ${id} updated successfully`,
+        message: 'Bill updated successfully',
       });
     } catch {
       return res.status(500).send({
@@ -252,14 +252,14 @@ module.exports = {
 
       if (!bill)
         return res.status(404).send({
-          error: `Bill ${id} not found`,
+          error: 'Bill not found',
         });
 
       updateGroupStatuses(bill.get('group_id'));
       await bill.destroy();
 
       return res.status(200).send({
-        message: `Bill ${id} deleted successfully`,
+        message: 'Bill deleted successfully',
       });
     } catch {
       return res.status(500).send({
