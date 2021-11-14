@@ -12,10 +12,9 @@ const routes = express.Router();
 // TODO: add prevention verifications
 
 routes.get('/bills', auth, BillController.index);
-routes.get('/bills/:id', auth, BillController.show);
 routes.post('/bills', auth, BillController.store);
-// routes.put('/bills/:id', auth, BillController.update); // TODO
-// routes.delete('/bills/:id', auth (?), BillController.destroy); // TODO
+routes.put('/bills/:id', auth, BillController.update);
+routes.delete('/bills/:id', auth, BillController.destroy);
 
 routes.get('/groups', GroupController.index);
 routes.get('/groups/:id', GroupController.show);
