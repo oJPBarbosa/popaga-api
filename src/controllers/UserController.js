@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Group = require('../models/Group');
 
 const { hash, compare } = require('bcrypt');
 const { v4 } = require('uuid');
@@ -14,7 +15,7 @@ module.exports = {
         attributes: ['id', 'username', 'email', 'avatar', 'created_at'],
       });
 
-      return res.status(200).json(users);
+      return res.json(users);
     } catch {
       return res.status(500).send({
         error: 'Server fail',
@@ -25,7 +26,7 @@ module.exports = {
   async show(req, res) {
     const { id } = req.params;
 
-    if (id === '' || !validate(id, 4))
+    if (!validate(id, 4))
       return res.status(400).send({
         error: 'Invalid user',
       });
@@ -41,7 +42,7 @@ module.exports = {
           error: 'User not found',
         });
 
-      return res.status(200).json(user);
+      return res.json(user);
     } catch {
       return res.status(500).send({
         error: 'Server fail',
@@ -126,12 +127,13 @@ module.exports = {
     });
 
     if (exists)
-      return res.status(400).json({
+      return res.status(400).send({
         error: 'User already exists',
       });
 
+    const { avatar } = req.body;
     try {
-      await User.create({
+      const user = await User.create({
         id: v4(),
         username,
         email,
@@ -139,7 +141,9 @@ module.exports = {
         avatar,
       });
 
-      return res.status(201).json({ id });
+      return res.status(201).json({
+        id: user.get('id'),
+      });
     } catch {
       return res.status(500).send({
         error: 'Server fail',
@@ -151,7 +155,7 @@ module.exports = {
     const { id } = req.params;
     const { password, username, avatar } = req.body;
 
-    if (id === '' || !validate(id, 4))
+    if (!validate(id, 4))
       return res.status(400).send({
         error: 'Invalid bill',
       });
@@ -188,7 +192,7 @@ module.exports = {
   async destroy(req, res) {
     const { id } = req.params;
 
-    if (id === '' || !validate(id, 4))
+    if (!validate(id, 4))
       return res.status(400).send({
         error: 'Invalid user',
       });

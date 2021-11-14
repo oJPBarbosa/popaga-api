@@ -66,7 +66,7 @@ module.exports = {
 
         updateGroupStatuses(bill.get('group')['id']);
 
-        return res.status(200).json(bill);
+        return res.json(bill);
       } else if (group_id) {
         if (!validate(group_id, 4))
           return res.status(400).send({
@@ -99,7 +99,7 @@ module.exports = {
 
         updateGroupStatuses(group_id);
 
-        return res.status(200).json({
+        return res.json({
           group,
           bills,
         });
@@ -132,7 +132,7 @@ module.exports = {
         updateGroupStatuses(bill.get('group')['id']);
       });
 
-      return res.status(200).json(bills);
+      return res.json(bills);
     } catch {
       return res.status(500).send({
         error: 'Server fail',

@@ -58,11 +58,11 @@ module.exports = {
       });
 
       return res.status(201).json({ id });
-    } catch (error) {
-      console.log(error);
+    } catch {
       return res.status(500).send({
         error: 'Server fail',
       });
     }
   },
+  async destroy(req, res) {},
 };
