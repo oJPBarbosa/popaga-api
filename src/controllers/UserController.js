@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const Group = require('../models/Group');
 
-const { hash, compare } = require('bcrypt');
+const { hash, genSalt, compare } = require('bcrypt');
 const { v4 } = require('uuid');
 const validate = require('uuid-validate');
 const { sign } = require('jsonwebtoken');
@@ -137,7 +137,7 @@ module.exports = {
         id: v4(),
         username,
         email,
-        password: await hash(password, 8),
+        password: (await genSalt()) + (await hash(password, 8)),
         avatar,
       });
 
