@@ -4,9 +4,10 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('bills', {
       id: {
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
         primaryKey: true,
         allowNull: false,
+        defaultValue: Sequelize.UUIDV4,
       },
       name: {
         type: Sequelize.STRING,
@@ -25,7 +26,7 @@ module.exports = {
         allowNull: false,
       },
       group_id: {
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'groups',

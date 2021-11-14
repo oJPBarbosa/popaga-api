@@ -5,14 +5,14 @@ class Bill extends Model {
     super.init(
       {
         id: {
-          type: DataTypes.STRING,
+          type: DataTypes.UUID,
           primaryKey: true,
         },
         name: DataTypes.STRING,
         description: DataTypes.STRING,
         value: DataTypes.STRING,
         state: DataTypes.STRING,
-        group_id: DataTypes.STRING,
+        group_id: DataTypes.UUID,
       },
       {
         sequelize,

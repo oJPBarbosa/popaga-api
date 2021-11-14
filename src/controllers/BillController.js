@@ -43,6 +43,7 @@ module.exports = {
         include: [
           {
             model: Group,
+            as: 'group',
             attributes: ['id', 'name', 'state'],
           },
         ],
@@ -62,20 +63,22 @@ module.exports = {
   },
 
   async store(req, res) {
-    const { name, description, value, state, group_id } = req.body;
+    const { name, description, value, group_id } = req.body;
     const id = v4();
 
     try {
-      await Bill.create({
+      const bill = await Bill.create({
         id,
         name,
         description,
         value,
-        state,
+        state: 'to be paid',
         group_id,
       });
 
-      return res.status(201).json({ id });
+      return res.status(201).json({
+        id: bill.get('id'),
+      });
     } catch {
       return res.status(500).send({
         error: 'Server fail',

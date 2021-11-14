@@ -5,11 +5,11 @@ class UserGroup extends Model {
     super.init(
       {
         id: {
-          type: DataTypes.STRING,
+          type: DataTypes.UUID,
           primaryKey: true,
         },
-        group_id: DataTypes.STRING,
-        user_id: DataTypes.STRING,
+        group_id: DataTypes.UUID,
+        user_id: DataTypes.UUID,
       },
       {
         sequelize,

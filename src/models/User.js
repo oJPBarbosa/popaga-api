@@ -5,7 +5,7 @@ class User extends Model {
     super.init(
       {
         id: {
-          type: DataTypes.STRING,
+          type: DataTypes.UUID,
           primaryKey: true,
         },
         email: DataTypes.STRING,

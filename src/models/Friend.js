@@ -5,11 +5,11 @@ class Friend extends Model {
     super.init(
       {
         id: {
-          type: DataTypes.STRING,
+          type: DataTypes.UUID,
           primaryKey: true,
         },
-        user_id: DataTypes.STRING,
-        friend_id: DataTypes.STRING,
+        user_id: DataTypes.UUID,
+        friend_id: DataTypes.UUID,
       },
       {
         sequelize,

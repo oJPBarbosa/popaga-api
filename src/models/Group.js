@@ -5,7 +5,7 @@ class Group extends Model {
     super.init(
       {
         id: {
-          type: DataTypes.STRING,
+          type: DataTypes.UUID,
           primaryKey: true,
         },
         name: DataTypes.STRING,
