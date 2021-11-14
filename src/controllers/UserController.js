@@ -52,6 +52,11 @@ module.exports = {
         attributes: ['id', 'password'],
       });
 
+      if (!user)
+        return res.status(404).send({
+          error: `User with email ${email} not found`,
+        });
+
       const hashedPassword = user.get('password');
       const matches = await compare(password, hashedPassword);
 
@@ -73,7 +78,7 @@ module.exports = {
       }
 
       return res.status(401).send({
-        error: 'Bad credentials',
+        error: 'Bad password',
       });
     } catch {
       return res.status(500).send({
