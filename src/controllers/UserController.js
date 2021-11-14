@@ -2,6 +2,7 @@ const User = require('../models/User');
 
 const { hash, compare } = require('bcrypt');
 const { v4 } = require('uuid');
+const validate = require('uuid-validate');
 const { sign } = require('jsonwebtoken');
 
 const config = require('../config/auth');
@@ -24,6 +25,11 @@ module.exports = {
   async show(req, res) {
     const { id } = req.params;
 
+    if (id === '' || !validate(id, 4))
+      return res.status(400).send({
+        error: 'Invalid user',
+      });
+
     try {
       const user = await User.findOne({
         where: { id },
@@ -32,7 +38,7 @@ module.exports = {
 
       if (!user)
         return res.status(404).send({
-          error: `User ${id} not found`,
+          error: 'User not found',
         });
 
       return res.status(200).json(user);
@@ -44,7 +50,17 @@ module.exports = {
   },
 
   async auth(req, res) {
-    const { email, password } = req.body;
+    const { email } = req.body;
+    if (!email || email === '')
+      return res.status(400).send({
+        error: 'Invalid email',
+      });
+
+    const { password } = req.body;
+    if (!password || password === '')
+      return res.status(400).send({
+        error: 'Invalid password',
+      });
 
     try {
       const user = await User.findOne({
@@ -54,11 +70,10 @@ module.exports = {
 
       if (!user)
         return res.status(404).send({
-          error: `User with email ${email} not found`,
+          error: 'User not found',
         });
 
-      const hashedPassword = user.get('password');
-      const matches = await compare(password, hashedPassword);
+      const matches = await compare(password, user.get('password'));
 
       if (matches) {
         const token = sign(
@@ -78,7 +93,7 @@ module.exports = {
       }
 
       return res.status(401).send({
-        error: 'Bad password',
+        error: 'Invalid password',
       });
     } catch {
       return res.status(500).send({
@@ -88,9 +103,23 @@ module.exports = {
   },
 
   async store(req, res) {
-    const { username, email, password, avatar } = req.body;
-    const id = v4();
-    const hashedPassword = await hash(password, 8);
+    const { username } = req.body;
+    if (!username || username === '')
+      return res.status(400).send({
+        error: 'Invalid username',
+      });
+
+    const { email } = req.body;
+    if (!email || email === '')
+      return res.status(400).send({
+        error: 'Invalid email',
+      });
+
+    const { password } = req.body;
+    if (!password || password === '')
+      return res.status(400).send({
+        error: 'Invalid password',
+      });
 
     const exists = await User.findOne({
       where: { email },
@@ -103,14 +132,80 @@ module.exports = {
 
     try {
       await User.create({
-        id,
+        id: v4(),
         username,
         email,
-        password: hashedPassword,
+        password: await hash(password, 8),
         avatar,
       });
 
       return res.status(201).json({ id });
+    } catch {
+      return res.status(500).send({
+        error: 'Server fail',
+      });
+    }
+  },
+
+  async update(req, res) {
+    const { id } = req.params;
+    const { password, username, avatar } = req.body;
+
+    if (id === '' || !validate(id, 4))
+      return res.status(400).send({
+        error: 'Invalid bill',
+      });
+
+    if (!password && !username && !avatar)
+      return res.status(400).send({
+        error: 'Nothing to update',
+      });
+
+    try {
+      const user = await User.findByPk(id);
+
+      if (!user)
+        return res.status(400).send({
+          error: 'User not found',
+        });
+
+      user.password = password;
+      user.username = username;
+      user.avatar = avatar;
+
+      await user.save();
+
+      return res.status(200).send({
+        message: 'User updated successfully',
+      });
+    } catch {
+      return res.status(500).send({
+        error: 'Server fail',
+      });
+    }
+  },
+
+  async destroy(req, res) {
+    const { id } = req.params;
+
+    if (id === '' || !validate(id, 4))
+      return res.status(400).send({
+        error: 'Invalid user',
+      });
+
+    try {
+      const user = await User.findByPk(id);
+
+      if (!user)
+        return res.status(404).send({
+          error: 'User not found',
+        });
+
+      await user.destroy();
+
+      return res.status(200).send({
+        message: 'User deleted successfully',
+      });
     } catch {
       return res.status(500).send({
         error: 'Server fail',
