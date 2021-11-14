@@ -44,7 +44,7 @@ module.exports = {
       if (bill_id) {
         if (bill_id === '' || !validate(bill_id, 4))
           return res.status(400).send({
-            error: 'Bad bill',
+            error: 'Invalid bill',
           });
 
         const bill = await Bill.findOne({
@@ -70,7 +70,7 @@ module.exports = {
       } else if (group_id) {
         if (group_id === '' || !validate(group_id, 4))
           return res.status(400).send({
-            error: 'Bad group',
+            error: 'Invalid group',
           });
 
         const bills = await Bill.findAll({
@@ -144,31 +144,31 @@ module.exports = {
     const { name } = req.body;
     if (!name || name === '')
       return res.status(400).send({
-        error: `Bad name`,
+        error: `Invalid name`,
       });
 
     const { description } = req.body;
     if (!description || description === '')
       return res.status(400).send({
-        error: `Bad description`,
+        error: `Invalid description`,
       });
 
     const { value } = req.body;
     if (!value || value === '')
       return res.status(400).send({
-        error: `Bad value`,
+        error: `Invalid value`,
       });
 
     const { status } = req.body;
     if (!status || status === '')
       return res.status(400).send({
-        error: `Bad status`,
+        error: `Invalid status`,
       });
 
     const { group_id } = req.body;
     if (!group_id || group_id === '' || !validate(group_id, 4))
       return res.status(400).send({
-        error: 'Bad group',
+        error: 'Invalid group',
       });
 
     const exists = await Group.findByPk(group_id);
@@ -205,7 +205,7 @@ module.exports = {
 
     if (id === '' || !validate(id, 4))
       return res.status(400).send({
-        error: 'Bad bill',
+        error: 'Invalid bill',
       });
 
     if (!name && !description && !value && !status)
@@ -244,7 +244,7 @@ module.exports = {
 
     if (id === '' || !validate(id, 4))
       return res.status(400).send({
-        error: 'Bad bill',
+        error: 'Invalid bill',
       });
 
     try {
