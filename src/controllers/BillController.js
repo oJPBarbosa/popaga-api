@@ -13,11 +13,12 @@ const updateGroupStatuses = async (group_id) => {
   let grade = parseInt(statuses.length / 2);
 
   statuses.forEach((status) => {
-    const _status = status.get('status').toLowerCase();
+    const value = status.get('status').toLowerCase();
 
-    if (_status === 'to be paid') grade--;
-    else if (_status === 'paid off') grade++;
-    else if (_status === 'archived') grade--;
+    if (value !== 'no debt') {
+      if (value === 'to be paid' || value === 'archived') grade--;
+      else grade++;
+    }
   });
 
   const group = await Group.findByPk(group_id);
@@ -176,10 +177,9 @@ module.exports = {
         error: `Group ${group_id} not found`,
       });
 
-    const id = v4();
     try {
       const bill = await Bill.create({
-        id,
+        id: v4(),
         name,
         description,
         value,
