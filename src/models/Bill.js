@@ -11,7 +11,7 @@ class Bill extends Model {
         name: DataTypes.STRING,
         description: DataTypes.STRING,
         value: DataTypes.STRING,
-        state: DataTypes.STRING,
+        status: DataTypes.STRING,
         group_id: DataTypes.UUID,
       },
       {
