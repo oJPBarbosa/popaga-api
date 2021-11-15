@@ -141,8 +141,19 @@ module.exports = {
         avatar,
       });
 
+      const token = sign(
+        {
+          id: user.get('id'),
+        },
+        config.secret,
+        {
+          expiresIn: 86400,
+        }
+      );
+
       return res.status(201).json({
         id: user.get('id'),
+        token,
       });
     } catch {
       return res.status(500).send({
