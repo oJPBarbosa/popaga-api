@@ -75,6 +75,8 @@ module.exports = {
 
       const matches = await compare(password, user.get('password'));
 
+      console.log(`matches: ${matches}`);
+
       if (matches) {
         const token = sign(
           {
