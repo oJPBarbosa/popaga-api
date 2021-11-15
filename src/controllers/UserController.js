@@ -1,5 +1,4 @@
 const User = require('../models/User');
-const Group = require('../models/Group');
 
 const { hash, genSalt, compare } = require('bcrypt');
 const { v4 } = require('uuid');
@@ -70,7 +69,7 @@ module.exports = {
       });
 
       if (!user)
-        return res.status(404).send({
+        return res.status(400).send({
           error: 'User not found',
         });
 
