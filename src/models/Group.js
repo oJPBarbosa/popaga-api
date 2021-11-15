@@ -26,10 +26,10 @@ class Group extends Model {
       through: 'user_groups',
       as: 'group',
     }); */
-    this.belongsTo(models.UserGroup, {
+    /* this.belongsTo(models.UserGroup, {
       foreignKey: 'group_id',
       as: 'groups',
-    });
+    }); */
   }
 }
 

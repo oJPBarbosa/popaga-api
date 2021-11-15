@@ -18,8 +18,8 @@ class UserGroup extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.Group, { foreignKey: 'group_id' });
-    this.hasMany(models.User, { foreignKey: 'user_id' });
+    /* this.hasMany(models.Group, { foreignKey: 'group_id' });
+    this.hasMany(models.User, { foreignKey: 'user_id' }); */
   }
 }
 
