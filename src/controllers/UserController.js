@@ -138,7 +138,7 @@ module.exports = {
         id: v4(),
         username,
         email,
-        password: (await genSalt()) + (await hash(password, 8)),
+        password: await hash(password, await genSalt()),
         avatar,
       });
 
@@ -185,7 +185,7 @@ module.exports = {
           error: 'User not found',
         });
 
-      user.password = password;
+      user.password = await hash(password, await genSalt());
       user.username = username;
       user.avatar = avatar;
 
