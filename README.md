@@ -14,7 +14,7 @@
 
 ## 🎯 Sobre
 
-A API do [PóPaga](https://github.com/obielwb/popaga).
+API do [PóPaga](https://github.com/obielwb/popaga).
 
 ## 🙋 Como usar
 
@@ -42,7 +42,7 @@ $ yarn start
 - [Sequelize](https://sequelize.org/)
 - [PostgreSQL](https://www.postgresql.org/)
 
-# ✍️ Autores
+## ✍️ Autores
 
 Um projeto idealizado e construído por [Felipe Stolze Vazquez](https://github.com/Vazqual), [Gabriel Willian Bartmanovicz](https://github.com/obielwb), [João Pedro Ferreira Barbosa](https://github.com/oJPBarbosa) e [Karen Ruas](https://github.com/annRuas).
 
