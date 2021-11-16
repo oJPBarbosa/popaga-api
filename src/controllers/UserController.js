@@ -11,7 +11,14 @@ module.exports = {
   async index(req, res) {
     try {
       const users = await User.findAll({
-        attributes: ['id', 'username', 'email', 'avatar', 'standard', 'created_at'],
+        attributes: [
+          'id',
+          'username',
+          'email',
+          'avatar',
+          'standard',
+          'created_at',
+        ],
       });
 
       return res.json(users);
@@ -75,8 +82,6 @@ module.exports = {
 
       const matches = await compare(password, user.get('password'));
 
-      console.log(`matches: ${matches}`);
-
       if (matches) {
         const token = sign(
           {
@@ -117,14 +122,11 @@ module.exports = {
         error: 'Invalid email',
       });
 
-    const { standard } = req.body;
-    if (standard) {
-      const { password } = req.body;
-      if (!password || password === '')
-        return res.status(400).send({
-          error: 'Invalid password',
-        });
-    }
+    const { password } = req.body;
+    if (!password || password === '')
+      return res.status(400).send({
+        error: 'Invalid password',
+      });
 
     const exists = await User.findOne({
       where: { email },
@@ -137,9 +139,6 @@ module.exports = {
 
     const { avatar } = req.body;
     try {
-      if (!standard)
-        const password = v4();
-
       const user = await User.create({
         id: v4(),
         username,
