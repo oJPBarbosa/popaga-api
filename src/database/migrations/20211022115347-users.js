@@ -23,6 +23,10 @@ module.exports = {
         allowNull: false,
       },
       avatar: Sequelize.BLOB,
+      standard: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
