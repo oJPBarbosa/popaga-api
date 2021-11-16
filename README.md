@@ -6,7 +6,7 @@
   <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/oJPBarbosa/popaga-api.svg">
 
   <img alt="Repository size" src="https://img.shields.io/github/repo-size/oJPBarbosa/popaga-api.svg">
-  <a href="https://github.com/oJPBarbosa/popaga-api/commits/master">
+  <a href="https://github.com/oJPBarbosa/popaga-api/commits">
     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/oJPBarbosa/popaga-api.svg">
   </a>
   <img alt="GitHub" src="https://img.shields.io/github/license/oJPBarbosa/popaga-api.svg">
