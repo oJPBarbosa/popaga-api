@@ -16,7 +16,6 @@ module.exports = {
           'username',
           'email',
           'avatar',
-          'standard',
           'created_at',
         ],
       });
@@ -40,7 +39,7 @@ module.exports = {
     try {
       const user = await User.findOne({
         where: { id },
-        attributes: ['username', 'email', 'avatar', 'standard', 'created_at'],
+        attributes: ['username', 'email', 'avatar', 'created_at'],
       });
 
       if (!user)
