@@ -5,7 +5,7 @@ const auth = require('./middlewares/auth');
 const BillController = require('./controllers/BillController');
 const GroupController = require('./controllers/GroupController');
 const UserController = require('./controllers/UserController');
-const FriendController = require('./controllers/FriendController');
+const FriendshipController = require('./controllers/FriendshipController');
 
 const routes = express.Router();
 
@@ -27,8 +27,8 @@ routes.post('/users/auth', UserController.auth);
 routes.put('/users/:id', auth, UserController.update);
 routes.delete('/users/:id', auth, UserController.destroy);
 
-routes.get('/users/:id/friends', auth, FriendController.show); // TODO
-routes.post('/users/:id/friends', auth, FriendController.store); // TODO
+routes.get('/users/:id/friends', auth, FriendshipController.show); // TODO
+routes.post('/users/:id/friends', auth, FriendshipController.store); // TODO
 // routes.delete('/users/:id/friends', auth, FriendController.destroy); // TODO
 
 module.exports = routes;

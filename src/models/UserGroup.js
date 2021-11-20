@@ -4,10 +4,6 @@ class UserGroup extends Model {
   static init(sequelize) {
     super.init(
       {
-        id: {
-          type: DataTypes.UUID,
-          primaryKey: true,
-        },
         group_id: DataTypes.UUID,
         user_id: DataTypes.UUID,
       },
@@ -18,8 +14,8 @@ class UserGroup extends Model {
   }
 
   static associate(models) {
-    /* this.hasMany(models.Group, { foreignKey: 'group_id' });
-    this.hasMany(models.User, { foreignKey: 'user_id' }); */
+    this.belongsTo(models.Group, { foreignKey: 'group_id' });
+    this.belongsTo(models.User, { foreignKey: 'user_id', as: 'data' });
   }
 }
 

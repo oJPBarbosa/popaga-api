@@ -46,6 +46,17 @@ module.exports = {
             as: 'owner',
             attributes: ['id', 'username', 'email'],
           },
+          {
+            association: 'users',
+            attributes: ['user_id'],
+            include: [
+              {
+                model: User,
+                as: 'data',
+                attributes: ['username', 'email'],
+              },
+            ],
+          },
         ],
       });
 
@@ -89,9 +100,7 @@ module.exports = {
         owner_id: user_id,
       });
 
-      // await user.addGroup(group); // not working
       await UserGroup.create({
-        id: v4(),
         group_id: group.get('id'),
         user_id,
       });
@@ -99,12 +108,14 @@ module.exports = {
       return res.status(201).json({
         id: group.get('id'),
       });
-    } catch {
+    } catch (e) {
+      console.log(e);
       return res.status(500).send({
         error: 'Server fail',
       });
     }
   },
+
   async update(req, res) {
     const { id } = req.params;
     const { name, user_ids } = req.body;
@@ -140,9 +151,8 @@ module.exports = {
 
         user_ids.forEach(async (user_id) => {
           // const user = await User.findByPk(user_id);
-          // await user.addGroup(group); // not working
+
           await UserGroup.create({
-            id: v4(),
             group_id: id,
             user_id,
           });
@@ -152,8 +162,7 @@ module.exports = {
       return res.status(200).send({
         message: 'Group updated successfully',
       });
-    } catch (e) {
-      console.log(e);
+    } catch {
       return res.status(500).send({
         error: 'Server fail',
       });

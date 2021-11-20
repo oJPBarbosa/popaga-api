@@ -11,14 +11,7 @@ module.exports = {
   async index(req, res) {
     try {
       const users = await User.findAll({
-        attributes: [
-          'id',
-          'username',
-          'email',
-          'avatar',
-          'standard',
-          'created_at',
-        ],
+        attributes: ['id', 'username', 'email', 'avatar', 'created_at'],
       });
 
       return res.json(users);
@@ -40,7 +33,7 @@ module.exports = {
     try {
       const user = await User.findOne({
         where: { id },
-        attributes: ['username', 'email', 'avatar', 'standard', 'created_at'],
+        attributes: ['username', 'email', 'avatar', 'created_at'],
       });
 
       if (!user)
@@ -145,7 +138,6 @@ module.exports = {
         email,
         password: await hash(password, await genSalt()),
         avatar,
-        standard,
       });
 
       const token = sign(
@@ -162,7 +154,8 @@ module.exports = {
         id: user.get('id'),
         token,
       });
-    } catch {
+    } catch (e) {
+      console.log(e);
       return res.status(500).send({
         error: 'Server fail',
       });

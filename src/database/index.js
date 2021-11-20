@@ -1,14 +1,13 @@
 const Sequelize = require('sequelize');
 
 const Bill = require('../models/Bill');
-const Friend = require('../models/Friend');
 const Group = require('../models/Group');
 const User = require('../models/User');
 const UserGroup = require('../models/UserGroup');
 
 const config = require('../config/database');
 
-const models = [Bill, Friend, Group, User, UserGroup];
+const models = [Bill, Group, User, UserGroup];
 
 class DataBase {
   constructor() {

@@ -21,15 +21,10 @@ class Group extends Model {
   static associate(models) {
     this.hasMany(models.Bill, { foreignKey: 'group_id' });
     this.belongsTo(models.User, { foreignKey: 'owner_id', as: 'owner' });
-    /* this.belongsToMany(models.User, {
+    this.hasMany(models.UserGroup, {
       foreignKey: 'group_id',
-      through: 'user_groups',
-      as: 'group',
-    }); */
-    /* this.belongsTo(models.UserGroup, {
-      foreignKey: 'group_id',
-      as: 'groups',
-    }); */
+      as: 'users',
+    });
   }
 }
 
