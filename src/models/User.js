@@ -20,10 +20,10 @@ class User extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.Group, { foreignKey: 'owner_id' });
-    this.hasMany(models.UserGroup, {
+    this.hasMany(models.Bill, { foreignKey: 'owner_id' });
+    this.hasMany(models.UserBill, {
       foreignKey: 'user_id',
-      as: 'groups',
+      as: 'users',
     });
   }
 }

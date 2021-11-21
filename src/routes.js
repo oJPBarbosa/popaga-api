@@ -3,21 +3,15 @@ const express = require('express');
 const auth = require('./middlewares/auth');
 
 const BillController = require('./controllers/BillController');
-const GroupController = require('./controllers/GroupController');
 const UserController = require('./controllers/UserController');
 
 const routes = express.Router();
 
 routes.get('/bills', auth, BillController.index);
+routes.get('/bills/:id', auth, BillController.show);
 routes.post('/bills', auth, BillController.store);
 routes.put('/bills/:id', auth, BillController.update);
 routes.delete('/bills/:id', auth, BillController.destroy);
-
-routes.get('/groups', auth, GroupController.index);
-routes.get('/groups/:id', auth, GroupController.show);
-routes.post('/groups', auth, GroupController.store); // DOING
-routes.put('/groups/:id', auth, GroupController.update); // DOING
-routes.delete('/groups/:id', auth, GroupController.destroy); // DOING
 
 routes.get('/users', auth, UserController.index);
 routes.get('/users/:id', auth, UserController.show);

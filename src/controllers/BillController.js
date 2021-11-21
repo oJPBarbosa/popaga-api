@@ -1,110 +1,13 @@
 const Bill = require('../models/Bill');
-const Group = require('../models/Group');
+const User = require('../models/User');
+const UserBill = require('../models/UserBill');
 
 const { v4 } = require('uuid');
 const validate = require('uuid-validate');
 
-const updateGroupStatuses = async (group_id) => {
-  const statuses = await Bill.findAll({
-    where: { group_id },
-    attributes: ['status'],
-  });
-
-  let grade = parseInt(statuses.length / 2);
-
-  statuses.forEach((status) => {
-    const value = status.get('status').toLowerCase();
-
-    if (value !== 'no debt') {
-      if (value === 'to be paid' || value === 'archived') grade--;
-      else grade++;
-    }
-  });
-
-  const group = await Group.findByPk(group_id);
-
-  if (grade > statuses.length / 2) group.status = 'cool';
-  else if (grade === statuses.length / 2) group.status = 'normal';
-  else if (grade < statuses.length / 2) group.status = 'negative';
-
-  await group.save();
-};
-
 module.exports = {
   async index(req, res) {
-    const bill_id = req.query.bill;
-    const group_id = req.query.group;
-
-    if (bill_id && group_id)
-      return res.status(400).send({
-        error: 'Only one query param is allowed at a time',
-      });
-
     try {
-      if (bill_id) {
-        if (!validate(bill_id, 4))
-          return res.status(400).send({
-            error: 'Invalid bill',
-          });
-
-        const bill = await Bill.findOne({
-          where: { id: bill_id },
-          attributes: ['name', 'description', 'value', 'status', 'created_at'],
-          include: [
-            {
-              model: Group,
-              as: 'group',
-              attributes: ['id', 'name', 'status'],
-            },
-          ],
-        });
-
-        if (!bill || bill.length === 0)
-          return res.status(404).send({
-            error: 'Bill not found',
-          });
-
-        updateGroupStatuses(bill.get('group')['id']);
-
-        return res.json(bill);
-      } else if (group_id) {
-        if (!validate(group_id, 4))
-          return res.status(400).send({
-            error: 'Invalid group',
-          });
-
-        const bills = await Bill.findAll({
-          where: { group_id },
-          attributes: [
-            'id',
-            'name',
-            'description',
-            'value',
-            'status',
-            'created_at',
-          ],
-        });
-
-        const group = await Group.findOne({
-          where: {
-            id: group_id,
-          },
-          attributes: ['name', 'status', 'created_at'],
-        });
-
-        if (!bills || bills.length === 0)
-          return res.status(404).send({
-            error: 'Group has no bills',
-          });
-
-        updateGroupStatuses(group_id);
-
-        return res.json({
-          group,
-          bills,
-        });
-      }
-
       const bills = await Bill.findAll({
         attributes: [
           'id',
@@ -116,9 +19,20 @@ module.exports = {
         ],
         include: [
           {
-            model: Group,
-            as: 'group',
-            attributes: ['id', 'name', 'status'],
+            model: User,
+            as: 'owner',
+            attributes: ['id', 'username', 'email', 'avatar'],
+          },
+          {
+            association: 'users',
+            attributes: ['user_id'],
+            include: [
+              {
+                model: User,
+                as: 'data',
+                attributes: ['username', 'email', 'avatar'],
+              },
+            ],
           },
         ],
       });
@@ -128,11 +42,53 @@ module.exports = {
           error: 'Bills not found',
         });
 
-      bills.forEach((bill) => {
-        updateGroupStatuses(bill.get('group')['id']);
+      return res.status(200).json(bills);
+    } catch {
+      return res.status(500).send({
+        error: 'Server fail',
+      });
+    }
+  },
+
+  async show(req, res) {
+    const { id } = req.params;
+
+    try {
+      const bill = await Bill.findByPk(id, {
+        attributes: [
+          'id',
+          'name',
+          'description',
+          'value',
+          'status',
+          'created_at',
+        ],
+        include: [
+          {
+            model: User,
+            as: 'owner',
+            attributes: ['id', 'username', 'email', 'avatar'],
+          },
+          {
+            association: 'users',
+            attributes: ['user_id'],
+            include: [
+              {
+                model: User,
+                as: 'data',
+                attributes: ['username', 'email', 'avatar'],
+              },
+            ],
+          },
+        ],
       });
 
-      return res.json(bills);
+      if (!bill)
+        return res.status(404).send({
+          error: 'Bill not found',
+        });
+
+      return res.status(200).json(bill);
     } catch {
       return res.status(500).send({
         error: 'Server fail',
@@ -165,17 +121,19 @@ module.exports = {
         error: 'Invalid status',
       });
 
-    const { group_id } = req.body;
-    if (!validate(group_id, 4))
+    const { owner_id } = req.body;
+    if (!validate(owner_id, 4))
       return res.status(400).send({
-        error: 'Invalid group',
+        error: 'Invalid owner',
       });
 
-    const exists = await Group.findByPk(group_id);
+    const exists = await User.findByPk(owner_id);
     if (!exists)
       return res.status(404).send({
-        error: 'Group not found',
+        error: 'Owner not found',
       });
+
+    const users_emails = req.body.users_emails ? req.body.users_emails : [];
 
     try {
       const bill = await Bill.create({
@@ -184,10 +142,28 @@ module.exports = {
         description,
         value,
         status,
-        group_id,
+        owner_id,
       });
 
-      updateGroupStatuses(group_id);
+      const owner_email = (await User.findByPk(owner_id)).get('email');
+
+      if (!users_emails.includes(owner_email)) users_emails.push(owner_email);
+
+      users_emails.forEach(async (user_email) => {
+        const user = await User.findOne({
+          where: {
+            email: user_email,
+          },
+        });
+
+        if (user) {
+          await UserBill.create({
+            id: v4(),
+            bill_id: bill.get('id'),
+            user_id: user.get('id'),
+          });
+        }
+      });
 
       return res.status(201).json({
         id: bill.get('id'),
@@ -201,14 +177,14 @@ module.exports = {
 
   async update(req, res) {
     const { id } = req.params;
-    const { name, description, value, status } = req.body;
+    const { name, description, value, status, users_emails } = req.body;
 
     if (!validate(id, 4))
       return res.status(400).send({
         error: 'Invalid bill',
       });
 
-    if (!name && !description && !value && !status)
+    if (!name && !description && !value && !status && !users_emails)
       return res.status(400).send({
         error: 'Nothing to update',
       });
@@ -226,7 +202,24 @@ module.exports = {
       bill.value = value;
       bill.status = status;
 
-      updateGroupStatuses(bill.get('group_id'));
+      if (users_emails) {
+        users_emails.forEach(async (user_email) => {
+          const user = await User.findOne({
+            where: {
+              email: user_email,
+            },
+          });
+
+          if (user) {
+            await UserBill.create({
+              id: v4(),
+              bill_id: id,
+              user_id: user.get('id'),
+            });
+          }
+        });
+      }
+
       await bill.save();
 
       return res.status(200).send({
@@ -255,7 +248,16 @@ module.exports = {
           error: 'Bill not found',
         });
 
-      updateGroupStatuses(bill.get('group_id'));
+      const user_bills = await UserBill.findAll({
+        where: {
+          bill_id: id,
+        },
+      });
+
+      user_bills.forEach(async (user_bill) => {
+        await user_bill.destroy();
+      });
+
       await bill.destroy();
 
       return res.status(200).send({

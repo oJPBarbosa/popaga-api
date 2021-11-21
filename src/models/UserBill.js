@@ -1,10 +1,14 @@
 const { Model, DataTypes } = require('sequelize');
 
-class UserGroup extends Model {
+class UserBill extends Model {
   static init(sequelize) {
     super.init(
       {
-        group_id: DataTypes.UUID,
+        id: {
+          type: DataTypes.UUID,
+          primaryKey: true,
+        },
+        bill_id: DataTypes.UUID,
         user_id: DataTypes.UUID,
       },
       {
@@ -14,9 +18,9 @@ class UserGroup extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Group, { foreignKey: 'group_id' });
+    this.belongsTo(models.Bill, { foreignKey: 'bill_id' });
     this.belongsTo(models.User, { foreignKey: 'user_id', as: 'data' });
   }
 }
 
-module.exports = UserGroup;
+module.exports = UserBill;

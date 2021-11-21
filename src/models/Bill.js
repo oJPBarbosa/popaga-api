@@ -12,7 +12,7 @@ class Bill extends Model {
         description: DataTypes.STRING,
         value: DataTypes.STRING,
         status: DataTypes.STRING,
-        group_id: DataTypes.UUID,
+        owner_id: DataTypes.UUID,
       },
       {
         sequelize,
@@ -21,7 +21,11 @@ class Bill extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Group, { foreignKey: 'group_id', as: 'group' });
+    this.belongsTo(models.User, { foreignKey: 'owner_id', as: 'owner' });
+    this.hasMany(models.UserBill, {
+      foreignKey: 'bill_id',
+      as: 'users',
+    });
   }
 }
 

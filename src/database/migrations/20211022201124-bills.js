@@ -25,11 +25,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      group_id: {
+      owner_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'groups',
+          model: 'users',
           key: 'id',
         },
         onUpdate: 'CASCADE',
