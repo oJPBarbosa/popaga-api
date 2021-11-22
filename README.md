@@ -29,7 +29,7 @@ $ cd popaga-api
 $ yarn
 
 # Instale as dependências de desenvolvimento
-$ yarn add nodemon -D
+$ yarn add nodemon sequelize-cli -D
 
 # Inicie a aplicação
 $ yarn start
