@@ -1,3 +1,5 @@
+// TODO:
+//  - add event table and, thus, change the bills
 require('./database');
 
 const express = require('express');
