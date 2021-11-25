@@ -1,3 +1,4 @@
+const EventUser = require('../models/EventUser');
 const User = require('../models/User');
 
 const { hash, genSalt, compare } = require('bcrypt');
@@ -34,6 +35,18 @@ module.exports = {
       const user = await User.findOne({
         where: { id },
         attributes: ['username', 'email', 'avatar', 'created_at'],
+        /* include: [
+          {
+            model: EventUser,
+            as: 'events',
+            attributes: ['event_id'],
+            include: [
+              {
+                association: 'users',
+              },
+            ],
+          }, 
+        ], */
       });
 
       if (!user)
@@ -86,7 +99,7 @@ module.exports = {
           }
         );
 
-        return res.status(200).send({
+        return res.send({
           id: user.get('id'),
           token,
         });
@@ -154,8 +167,7 @@ module.exports = {
         id: user.get('id'),
         token,
       });
-    } catch (e) {
-      console.log(e);
+    } catch {
       return res.status(500).send({
         error: 'Server fail',
       });
@@ -190,7 +202,7 @@ module.exports = {
 
       await user.save();
 
-      return res.status(200).send({
+      return res.send({
         message: 'User updated successfully',
       });
     } catch {
@@ -215,6 +227,16 @@ module.exports = {
         return res.status(404).send({
           error: 'User not found',
         });
+
+      const user_events = await EventUser.findAll({
+        where: {
+          bill_id: id,
+        },
+      });
+
+      user_events.forEach(async (user_event) => {
+        await user_event.destroy();
+      });
 
       await user.destroy();
 
