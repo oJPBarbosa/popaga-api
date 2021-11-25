@@ -2,17 +2,17 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('user_bills', {
+    await queryInterface.createTable('event_users', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
         allowNull: false,
       },
-      bill_id: {
+      event_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'bills',
+          model: 'events',
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -40,6 +40,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('user_bills');
+    await queryInterface.dropTable('event_users');
   },
 };
