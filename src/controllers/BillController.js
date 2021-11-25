@@ -1,6 +1,7 @@
 const Bill = require('../models/Bill');
+const Event = require('../models/Event');
+const EventBill = require('../models/EventBill');
 const User = require('../models/User');
-const UserBill = require('../models/UserBill');
 
 const { v4 } = require('uuid');
 const validate = require('uuid-validate');
@@ -23,17 +24,6 @@ module.exports = {
             as: 'owner',
             attributes: ['id', 'username', 'email', 'avatar'],
           },
-          {
-            association: 'users',
-            attributes: ['user_id'],
-            include: [
-              {
-                model: User,
-                as: 'data',
-                attributes: ['username', 'email', 'avatar'],
-              },
-            ],
-          },
         ],
       });
 
@@ -42,7 +32,7 @@ module.exports = {
           error: 'Bills not found',
         });
 
-      return res.status(200).json(bills);
+      return res.json(bills);
     } catch {
       return res.status(500).send({
         error: 'Server fail',
@@ -69,17 +59,6 @@ module.exports = {
             as: 'owner',
             attributes: ['id', 'username', 'email', 'avatar'],
           },
-          {
-            association: 'users',
-            attributes: ['user_id'],
-            include: [
-              {
-                model: User,
-                as: 'data',
-                attributes: ['username', 'email', 'avatar'],
-              },
-            ],
-          },
         ],
       });
 
@@ -88,7 +67,7 @@ module.exports = {
           error: 'Bill not found',
         });
 
-      return res.status(200).json(bill);
+      return res.json(bill);
     } catch {
       return res.status(500).send({
         error: 'Server fail',
@@ -127,13 +106,23 @@ module.exports = {
         error: 'Invalid owner',
       });
 
-    const exists = await User.findByPk(owner_id);
-    if (!exists)
+    const userExists = await User.findByPk(owner_id);
+    if (!userExists)
       return res.status(404).send({
         error: 'Owner not found',
       });
 
-    const users_emails = req.body.users_emails ? req.body.users_emails : [];
+    const { event_id } = req.body;
+    if (!validate(event_id, 4))
+      return res.status(400).send({
+        error: 'Invalid event',
+      });
+
+    const eventExists = await Event.findByPk(event_id);
+    if (!eventExists)
+      return res.status(404).send({
+        error: 'Event not found',
+      });
 
     try {
       const bill = await Bill.create({
@@ -145,24 +134,10 @@ module.exports = {
         owner_id,
       });
 
-      const owner_email = (await User.findByPk(owner_id)).get('email');
-
-      if (!users_emails.includes(owner_email)) users_emails.push(owner_email);
-
-      users_emails.forEach(async (user_email) => {
-        const user = await User.findOne({
-          where: {
-            email: user_email,
-          },
-        });
-
-        if (user) {
-          await UserBill.create({
-            id: v4(),
-            bill_id: bill.get('id'),
-            user_id: user.get('id'),
-          });
-        }
+      await EventBill.create({
+        id: v4(),
+        event_id,
+        bill_id: bill.get('id'),
       });
 
       return res.status(201).json({
@@ -177,7 +152,7 @@ module.exports = {
 
   async update(req, res) {
     const { id } = req.params;
-    const { name, description, value, status, users_emails } = req.body;
+    const { name, description, value, status } = req.body;
 
     if (!validate(id, 4))
       return res.status(400).send({
@@ -202,27 +177,9 @@ module.exports = {
       bill.value = value;
       bill.status = status;
 
-      if (users_emails) {
-        users_emails.forEach(async (user_email) => {
-          const user = await User.findOne({
-            where: {
-              email: user_email,
-            },
-          });
-
-          if (user) {
-            await UserBill.create({
-              id: v4(),
-              bill_id: id,
-              user_id: user.get('id'),
-            });
-          }
-        });
-      }
-
       await bill.save();
 
-      return res.status(200).send({
+      return res.send({
         message: 'Bill updated successfully',
       });
     } catch {
@@ -248,19 +205,19 @@ module.exports = {
           error: 'Bill not found',
         });
 
-      const user_bills = await UserBill.findAll({
+      const bill_events = await EventBill.findAll({
         where: {
           bill_id: id,
         },
       });
 
-      user_bills.forEach(async (user_bill) => {
-        await user_bill.destroy();
+      bill_events.forEach(async (bill_event) => {
+        await bill_event.destroy();
       });
 
       await bill.destroy();
 
-      return res.status(200).send({
+      return res.send({
         message: 'Bill deleted successfully',
       });
     } catch {

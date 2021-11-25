@@ -22,10 +22,6 @@ class Bill extends Model {
 
   static associate(models) {
     this.belongsTo(models.User, { foreignKey: 'owner_id', as: 'owner' });
-    this.hasMany(models.UserBill, {
-      foreignKey: 'bill_id',
-      as: 'users',
-    });
   }
 }
 
