@@ -18,7 +18,7 @@ class EventUser extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Event, { foreignKey: 'event_id' });
+    this.belongsTo(models.Event, { foreignKey: 'event_id', as: 'event' });
     this.belongsTo(models.User, { foreignKey: 'user_id', as: 'data' });
   }
 }

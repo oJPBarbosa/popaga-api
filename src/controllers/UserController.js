@@ -1,3 +1,5 @@
+const Bill = require('../models/Bill');
+const Event = require('../models/Event');
 const EventUser = require('../models/EventUser');
 const User = require('../models/User');
 
@@ -35,18 +37,51 @@ module.exports = {
       const user = await User.findOne({
         where: { id },
         attributes: ['username', 'email', 'avatar', 'created_at'],
-        /* include: [
+        include: [
           {
             model: EventUser,
             as: 'events',
             attributes: ['event_id'],
             include: [
               {
-                association: 'users',
+                model: Event,
+                as: 'event',
+                attributes: ['name', 'status', 'created_at'],
+                include: [
+                  {
+                    association: 'bills',
+                    attributes: ['bill_id'],
+                    include: [
+                      {
+                        model: Bill,
+                        as: 'data',
+                        attributes: ['name', 'description', 'value', 'status'],
+                        include: [
+                          {
+                            model: User,
+                            as: 'owner',
+                            attributes: ['id', 'username', 'email', 'avatar'],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    association: 'users',
+                    attributes: ['user_id'],
+                    include: [
+                      {
+                        model: User,
+                        as: 'data',
+                        attributes: ['username', 'email', 'avatar'],
+                      },
+                    ],
+                  },
+                ],
               },
             ],
-          }, 
-        ], */
+          },
+        ],
       });
 
       if (!user)

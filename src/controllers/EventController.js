@@ -33,12 +33,12 @@ module.exports = {
           },
           {
             association: 'users',
-            attributes: ['user_id'],
+            attributes: [],
             include: [
               {
                 model: User,
                 as: 'data',
-                attributes: ['username', 'email', 'avatar'],
+                attributes: ['id', 'username', 'email', 'avatar'],
               },
             ],
           },
